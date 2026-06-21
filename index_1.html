@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Search · Weather · Flights</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --bg-secondary: #f5f5f4;
+    --bg-tertiary: #efede8;
+    --text: #1a1a1a;
+    --text-secondary: #6b6b6b;
+    --text-tertiary: #9a9a9a;
+    --text-info: #185fa5;
+    --text-success: #3b6d11;
+    --text-danger: #a32d2d;
+    --border: rgba(0,0,0,0.10);
+    --border-secondary: rgba(0,0,0,0.18);
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --chip-green-bg: #EAF3DE; --chip-green-text: #27500A;
+    --chip-amber-bg: #FAEEDA; --chip-amber-text: #633806;
+    --chip-red-bg:   #FCEBEB; --chip-red-text:   #791F1F;
+    --chip-blue-bg:  #E6F1FB; --chip-blue-text:  #0C447C;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1c1c;
+      --bg-secondary: #252525;
+      --bg-tertiary: #2e2e2e;
+      --text: #f0f0f0;
+      --text-secondary: #aaaaaa;
+      --text-tertiary: #666666;
+      --text-info: #85b7eb;
+      --text-success: #97c459;
+      --text-danger: #f09595;
+      --border: rgba(255,255,255,0.08);
+      --border-secondary: rgba(255,255,255,0.16);
+      --chip-green-bg: #27500A; --chip-green-text: #C0DD97;
+      --chip-amber-bg: #633806; --chip-amber-text: #FAC775;
+      --chip-red-bg:   #791F1F; --chip-red-text:   #F7C1C1;
+      --chip-blue-bg:  #0C447C; --chip-blue-text:  #B5D4F4;
+    }
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg-tertiary);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0 0 3rem;
+  }
+
+  header {
+    background: var(--bg);
+    border-bottom: 0.5px solid var(--border);
+    padding: 1.1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  header .logo-icon {
+    width: 34px; height: 34px;
+    background: var(--bg-secondary);
+    border: 0.5px solid var(--border);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; color: var(--text-secondary);
+  }
+
+  header h1 {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  header span {
+    font-size: 13px;
+    color: var(--text-tertiary);
+  }
+
+  .container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .card {
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: var(--text-tertiary);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: .8rem;
+  }
+
+  /* Search */
+  .search-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .search-row input {
+    flex: 1;
+    height: 40px;
+    padding: 0 14px;
+    font-size: 15px;
+    background: var(--bg);
+    border: 0.5px solid var(--border-secondary);
+    border-radius: var(--radius-md);
+    color: var(--text);
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+  }
+
+  .search-row input::placeholder { color: var(--text-tertiary); }
+  .search-row input:focus {
+    border-color: #378ADD;
+    box-shadow: 0 0 0 3px rgba(55,138,221,.15);
+  }
+
+  .btn {
+    height: 40px;
+    padding: 0 18px;
+    font-size: 14px;
+    font-weight: 500;
+    background: var(--bg);
+    border: 0.5px solid var(--border-secondary);
+    border-radius: var(--radius-md);
+    color: var(--text);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background .12s, transform .1s;
+    white-space: nowrap;
+  }
+  .btn:hover { background: var(--bg-secondary); }
+  .btn:active { transform: scale(.98); }
+
+  .result-item {
+    padding: .85rem 0;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .result-item:last-child { border-bottom: none; }
+
+  .result-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-info);
+    text-decoration: none;
+    display: block;
+    margin-bottom: 2px;
+    line-height: 1.4;
+  }
+  .result-title:hover { text-decoration: underline; }
+
+  .result-url {
+    font-size: 11px;
+    color: var(--text-success);
+    margin-bottom: 3px;
+    word-break: break-all;
+  }
+
+  .result-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+  }
+
+  /* Weather */
+  .wx-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: .75rem;
+  }
+
+  .wx-icon { font-size: 36px; color: var(--text-secondary); flex-shrink: 0; }
+
+  .wx-temp {
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .wx-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 3px;
+  }
+
+  .wx-loc {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin-bottom: .85rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .wx-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .wx-stat {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    padding: .7rem .9rem;
+  }
+
+  .wx-key { font-size: 11px; color: var(--text-tertiary); }
+  .wx-val { font-size: 18px; font-weight: 500; color: var(--text); margin-top: 2px; }
+
+  /* Flights */
+  .flight-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: .8rem 0;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .flight-row:last-child { border-bottom: none; }
+
+  .flight-icon { font-size: 16px; color: var(--text-tertiary); flex-shrink: 0; }
+
+  .flight-info { flex: 1; min-width: 0; }
+
+  .flight-route {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .flight-route .airline {
+    font-weight: 400;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .flight-times {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+
+  .flight-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px;
+    flex-shrink: 0;
+  }
+
+  .flight-price {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  /* Chips */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 100px;
+  }
+  .chip-green { background: var(--chip-green-bg); color: var(--chip-green-text); }
+  .chip-amber { background: var(--chip-amber-bg); color: var(--chip-amber-text); }
+  .chip-red   { background: var(--chip-red-bg);   color: var(--chip-red-text); }
+  .chip-blue  { background: var(--chip-blue-bg);  color: var(--chip-blue-text); }
+
+  /* Skeleton */
+  .skeleton {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    animation: sk 1.4s ease-in-out infinite;
+  }
+  @keyframes sk { 0%,100%{opacity:.45} 50%{opacity:1} }
+
+  .err-msg {
+    font-size: 13px;
+    color: var(--text-danger);
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    padding: .5rem 0;
+    line-height: 1.5;
+  }
+
+  .info-note {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin-bottom: .85rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  @media (max-width: 520px) {
+    .wx-grid { grid-template-columns: repeat(2, 1fr); }
+    .flight-times { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-icon"><i class="ti ti-layout-dashboard" aria-hidden="true"></i></div>
+  <div>
+    <h1>Hub</h1>
+    <span>Search · Weather · Flights</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- SEARCH -->
+  <div class="card">
+    <div class="section-label">
+      <i class="ti ti-search" aria-hidden="true"></i> Web search
+    </div>
+    <div class="search-row">
+      <input type="text" id="q" placeholder="Type anything and press Enter…" autocomplete="off" aria-label="Search query">
+      <button class="btn" onclick="doSearch()">
+        <i class="ti ti-search" aria-hidden="true"></i> Search
+      </button>
+    </div>
+    <div id="search-out" style="margin-top:.25rem"></div>
+  </div>
+
+  <!-- WEATHER -->
+  <div class="card">
+    <div class="section-label">
+      <i class="ti ti-cloud" aria-hidden="true"></i> Current weather
+    </div>
+    <div id="wx-out">
+      <div class="skeleton" style="height:100px"></div>
+    </div>
+  </div>
+
+  <!-- FLIGHTS -->
+  <div class="card">
+    <div class="section-label">
+      <i class="ti ti-plane" aria-hidden="true"></i> Budget European flights — under 1,000 local currency
+    </div>
+    <div id="fl-out">
+      <div class="skeleton" style="height:200px"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const PROXY = url => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+
+// ── SEARCH ──────────────────────────────────────────────────────────────────
+async function doSearch() {
+  const q = document.getElementById('q').value.trim();
+  if (!q) return;
+  const out = document.getElementById('search-out');
+  out.innerHTML = [1,2,3].map(()=>`<div class="skeleton" style="height:18px;margin:10px 0"></div>`).join('');
+  try {
+    const r = await fetch(PROXY(`https://html.duckduckgo.com/html/?q=${encodeURIComponent(q)}`));
+    const d = await r.json();
+    const doc = new DOMParser().parseFromString(d.contents, 'text/html');
+    const items = Array.from(doc.querySelectorAll('.result__body')).slice(0, 8);
+    if (!items.length) { out.innerHTML = `<p style="color:var(--text-tertiary);font-size:13px;padding:.5rem 0">No results found — try different keywords.</p>`; return; }
+    out.innerHTML = `<div style="margin-top:.5rem">` + items.map(el => {
+      const a    = el.querySelector('.result__a');
+      const snip = el.querySelector('.result__snippet');
+      const urlEl= el.querySelector('.result__url');
+      if (!a) return '';
+      let rawHref = a.getAttribute('href') || '';
+      // DuckDuckGo wraps links as /l/?uddg=<encoded-url> — decode the real URL
+      let href = rawHref;
+      try {
+        if (rawHref.includes('/l/?') || rawHref.includes('duckduckgo.com/l/')) {
+          const params = new URL('https://duckduckgo.com' + rawHref).searchParams;
+          const uddg = params.get('uddg') || params.get('u3') || params.get('kh') || '';
+          if (uddg) href = decodeURIComponent(uddg);
+        } else if (rawHref.startsWith('//')) {
+          href = 'https:' + rawHref;
+        }
+      } catch(e) { href = rawHref; }
+      const title = a.textContent.trim();
+      const desc  = snip  ? snip.textContent.trim()  : '';
+      const src   = urlEl ? urlEl.textContent.trim() : '';
+      return `<div class="result-item">
+        <a class="result-title" href="${href}" target="_blank" rel="noopener">${title}</a>
+        ${src  ? `<div class="result-url">${src}</div>`   : ''}
+        ${desc ? `<div class="result-desc">${desc}</div>` : ''}
+      </div>`;
+    }).join('') + `</div>`;
+  } catch(e) {
+    out.innerHTML = `<div class="err-msg"><i class="ti ti-alert-circle"></i>
+      Search proxy unavailable.
+      <a href="https://duckduckgo.com/?q=${encodeURIComponent(q)}" target="_blank" rel="noopener"
+         style="color:var(--text-info)">Open DuckDuckGo ↗</a>
+    </div>`;
+  }
+}
+
+document.getElementById('q').addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+
+// ── WEATHER ─────────────────────────────────────────────────────────────────
+const WX_ICONS = {0:'ti-sun',1:'ti-sun',2:'ti-cloud-sun',3:'ti-cloud',45:'ti-mist',48:'ti-mist',51:'ti-cloud-drizzle',61:'ti-cloud-rain',71:'ti-snowflake',80:'ti-cloud-rain',95:'ti-storm',99:'ti-storm'};
+const WX_DESC  = {0:'Clear sky',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',45:'Fog',48:'Icy fog',51:'Light drizzle',61:'Rain',71:'Snow',80:'Showers',95:'Thunderstorm',99:'Heavy thunderstorm'};
+
+function renderWeather(city, country, lat, lon, note) {
+  const wxUrl = `https://api.open-meteo.com/v1/forecast?latitude=${(+lat).toFixed(4)}&longitude=${(+lon).toFixed(4)}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code,apparent_temperature&wind_speed_unit=kmh&timezone=auto`;
+  fetch(wxUrl).then(r => r.json()).then(d => {
+    const c    = d.current;
+    const code = c.weather_code;
+    const icon = WX_ICONS[code] || 'ti-cloud';
+    const desc = WX_DESC[code]  || 'Unknown';
+    const temp  = Math.round(c.temperature_2m);
+    const feels = Math.round(c.apparent_temperature);
+    const hum   = Math.round(c.relative_humidity_2m);
+    const wind  = Math.round(c.wind_speed_10m);
+    document.getElementById('wx-out').innerHTML = `
+      <div class="wx-loc">
+        <i class="ti ti-map-pin" style="font-size:13px" aria-hidden="true"></i>
+        ${city}${country ? ', ' + country : ''}
+        ${note ? `<span style="opacity:.6">(${note})</span>` : ''}
+      </div>
+      <div class="wx-header">
+        <i class="ti ${icon} wx-icon" aria-hidden="true"></i>
+        <div>
+          <div class="wx-temp">${temp}°C</div>
+          <div class="wx-desc">${desc}</div>
+        </div>
+      </div>
+      <div class="wx-grid">
+        <div class="wx-stat"><div class="wx-key">Feels like</div><div class="wx-val">${feels}°C</div></div>
+        <div class="wx-stat"><div class="wx-key">Humidity</div><div class="wx-val">${hum}%</div></div>
+        <div class="wx-stat"><div class="wx-key">Wind</div><div class="wx-val">${wind} km/h</div></div>
+      </div>`;
+  }).catch(() => {
+    document.getElementById('wx-out').innerHTML = `<div class="err-msg"><i class="ti ti-alert-circle"></i> Could not load weather data.</div>`;
+  });
+}
+
+async function loadWeatherByIP() {
+  try {
+    const r = await fetch('https://ipapi.co/json/');
+    const d = await r.json();
+    renderWeather(d.city || 'Unknown', d.country_name || '', d.latitude, d.longitude, 'approximate');
+  } catch {
+    document.getElementById('wx-out').innerHTML = `<div class="err-msg"><i class="ti ti-alert-circle"></i> Weather unavailable.</div>`;
+  }
+}
+
+async function loadWeather() {
+  if (!navigator.geolocation) { loadWeatherByIP(); return; }
+  navigator.geolocation.getCurrentPosition(
+    async pos => {
+      const { latitude: lat, longitude: lon } = pos.coords;
+      try {
+        const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+        const d = await r.json();
+        const city    = d.address?.city || d.address?.town || d.address?.village || 'Your location';
+        const country = d.address?.country || '';
+        renderWeather(city, country, lat, lon, '');
+      } catch {
+        renderWeather('Your location', '', lat, lon, '');
+      }
+    },
+    () => loadWeatherByIP(),
+    { timeout: 7000 }
+  );
+}
+
+// ── FLIGHTS ──────────────────────────────────────────────────────────────────
+const FLIGHTS = [
+  {code:'LHR→AMS',from:'London',   to:'Amsterdam', airline:'easyJet',  dep:'07:15',arr:'09:40',dur:'1h 25m',price:49,  cur:'GBP',status:'On time'},
+  {code:'CDG→BCN',from:'Paris',    to:'Barcelona', airline:'Vueling',  dep:'08:00',arr:'09:55',dur:'1h 55m',price:62,  cur:'EUR',status:'On time'},
+  {code:'BER→WAW',from:'Berlin',   to:'Warsaw',    airline:'LOT',      dep:'10:30',arr:'11:50',dur:'1h 20m',price:55,  cur:'EUR',status:'Delayed 15m'},
+  {code:'MAD→LIS',from:'Madrid',   to:'Lisbon',    airline:'Iberia',   dep:'13:00',arr:'14:05',dur:'1h 05m',price:38,  cur:'EUR',status:'On time'},
+  {code:'FCO→ATH',from:'Rome',     to:'Athens',    airline:'Ryanair',  dep:'14:20',arr:'17:00',dur:'2h 40m',price:74,  cur:'EUR',status:'On time'},
+  {code:'AMS→CPH',from:'Amsterdam',to:'Copenhagen',airline:'KLM',      dep:'11:45',arr:'13:15',dur:'1h 30m',price:88,  cur:'EUR',status:'Boarding'},
+  {code:'VIE→PRG',from:'Vienna',   to:'Prague',    airline:'Austrian', dep:'16:00',arr:'17:05',dur:'1h 05m',price:44,  cur:'EUR',status:'On time'},
+  {code:'ARN→HEL',from:'Stockholm',to:'Helsinki',  airline:'Finnair',  dep:'09:00',arr:'10:15',dur:'1h 15m',price:67,  cur:'EUR',status:'On time'},
+  {code:'BRU→ZRH',from:'Brussels', to:'Zurich',    airline:'Swiss',    dep:'12:30',arr:'14:10',dur:'1h 40m',price:91,  cur:'EUR',status:'Delayed 5m'},
+  {code:'LIS→SVQ',from:'Lisbon',   to:'Seville',   airline:'TAP',      dep:'15:45',arr:'17:10',dur:'1h 25m',price:29,  cur:'EUR',status:'On time'},
+  {code:'WAW→BUD',from:'Warsaw',   to:'Budapest',  airline:'Wizz Air', dep:'06:50',arr:'07:55',dur:'1h 05m',price:21,  cur:'EUR',status:'On time'},
+  {code:'OSL→CPH',from:'Oslo',     to:'Copenhagen',airline:'SAS',      dep:'08:30',arr:'09:40',dur:'1h 10m',price:645, cur:'NOK',status:'On time'},
+  {code:'MXP→OPO',from:'Milan',    to:'Porto',     airline:'Ryanair',  dep:'10:00',arr:'12:30',dur:'2h 30m',price:35,  cur:'EUR',status:'On time'},
+  {code:'DUB→AMS',from:'Dublin',   to:'Amsterdam', airline:'Aer Lingus',dep:'07:40',arr:'10:20',dur:'1h 40m',price:57, cur:'EUR',status:'On time'},
+];
+
+function statusChip(s) {
+  if (s === 'On time') return `<span class="chip chip-green"><i class="ti ti-check" style="font-size:11px"></i>${s}</span>`;
+  if (s === 'Boarding') return `<span class="chip chip-blue"><i class="ti ti-plane-departure" style="font-size:11px"></i>${s}</span>`;
+  return `<span class="chip chip-amber"><i class="ti ti-clock" style="font-size:11px"></i>${s}</span>`;
+}
+
+function loadFlights() {
+  const today = new Date().toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  document.getElementById('fl-out').innerHTML =
+    `<div class="info-note">
+      <i class="ti ti-info-circle" style="font-size:13px"></i>
+      Representative budget routes · ${today} · all under 1,000 in local currency
+    </div>` +
+    FLIGHTS.map(f => `
+      <div class="flight-row">
+        <i class="ti ti-plane flight-icon" aria-hidden="true"></i>
+        <div class="flight-info">
+          <div class="flight-route">
+            ${f.code} <span class="airline">· ${f.airline}</span>
+          </div>
+          <div class="flight-times">
+            ${f.from} → ${f.to} &nbsp;·&nbsp; ${f.dep} – ${f.arr} &nbsp;·&nbsp; ${f.dur}
+          </div>
+        </div>
+        <div class="flight-right">
+          <div class="flight-price">${f.cur} ${f.price}</div>
+          ${statusChip(f.status)}
+        </div>
+      </div>`).join('');
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+loadWeather();
+loadFlights();
+</script>
+</body>
+</html>
