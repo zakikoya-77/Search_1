@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hub · Search · Weather · Flights · FIFA 2026</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--bg2:#f5f5f4;--bg3:#efede8;
+  --tx:#1a1a1a;--tx2:#6b6b6b;--tx3:#9a9a9a;
+  --info:#185fa5;--ok:#3b6d11;--err:#a32d2d;
+  --bd:rgba(0,0,0,.10);--bd2:rgba(0,0,0,.18);
+  --r8:8px;--r12:12px;
+  --cg-bg:#EAF3DE;--cg:#27500A;
+  --ca-bg:#FAEEDA;--ca:#633806;
+  --cr-bg:#FCEBEB;--cr:#791F1F;
+  --cb-bg:#E6F1FB;--cb:#0C447C;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#1c1c1c;--bg2:#252525;--bg3:#2e2e2e;
+  --tx:#f0f0f0;--tx2:#aaa;--tx3:#666;
+  --info:#85b7eb;--ok:#97c459;--err:#f09595;
+  --bd:rgba(255,255,255,.08);--bd2:rgba(255,255,255,.16);
+  --cg-bg:#27500A;--cg:#C0DD97;
+  --ca-bg:#633806;--ca:#FAC775;
+  --cr-bg:#791F1F;--cr:#F7C1C1;
+  --cb-bg:#0C447C;--cb:#B5D4F4;
+}}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg3);color:var(--tx);min-height:100vh;padding:0 0 3rem}
+
+/* ── Header ── */
+header{background:var(--bg);border-bottom:.5px solid var(--bd);padding:1rem 1.5rem;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100}
+.logo{width:34px;height:34px;background:var(--bg2);border:.5px solid var(--bd);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--tx2)}
+header h1{font-size:16px;font-weight:500}
+header .sub{font-size:13px;color:var(--tx3)}
+.hdr-r{margin-left:auto;font-size:12px;color:var(--tx3);display:flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
+
+/* ── Layout ── */
+.page{max-width:1200px;margin:0 auto;padding:1.5rem 1rem;display:grid;grid-template-columns:1fr 390px;gap:1.25rem;align-items:start}
+.col-l,.col-r{display:flex;flex-direction:column;gap:1.25rem}
+@media(max-width:860px){.page{grid-template-columns:1fr}}
+
+/* ── Cards ── */
+.card{background:var(--bg);border:.5px solid var(--bd);border-radius:var(--r12);padding:1.25rem 1.5rem}
+.card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem;gap:8px}
+.slabel{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.07em;color:var(--tx3);display:flex;align-items:center;gap:5px}
+.rbtn{font-size:11px;color:var(--info);background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:3px;padding:2px 6px;border-radius:4px;transition:background .12s;flex-shrink:0}
+.rbtn:hover{background:var(--bg2)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{animation:spin .7s linear infinite}
+
+/* ── Search ── */
+.srow{display:flex;gap:8px}
+.srow input{flex:1;height:40px;padding:0 14px;font-size:15px;background:var(--bg);border:.5px solid var(--bd2);border-radius:var(--r8);color:var(--tx);outline:none;transition:border-color .15s,box-shadow .15s}
+.srow input::placeholder{color:var(--tx3)}
+.srow input:focus{border-color:#378ADD;box-shadow:0 0 0 3px rgba(55,138,221,.15)}
+.sbtn{height:40px;padding:0 18px;font-size:14px;font-weight:500;background:var(--bg);border:.5px solid var(--bd2);border-radius:var(--r8);color:var(--tx);cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .12s,transform .1s;white-space:nowrap}
+.sbtn:hover{background:var(--bg2)}.sbtn:active{transform:scale(.98)}
+.ri{padding:.85rem 0;border-bottom:.5px solid var(--bd)}.ri:last-child{border-bottom:none}
+.rt{font-size:14px;font-weight:500;color:var(--info);text-decoration:none;display:block;margin-bottom:2px;line-height:1.4}.rt:hover{text-decoration:underline}
+.ru{font-size:11px;color:var(--ok);margin-bottom:3px;word-break:break-all}
+.rd{font-size:13px;color:var(--tx2);line-height:1.55}
+
+/* ── Weather ── */
+.wx-loc{font-size:12px;color:var(--tx3);margin-bottom:.85rem;display:flex;align-items:center;gap:4px}
+.wx-hdr{display:flex;align-items:flex-start;gap:12px;margin-bottom:.75rem}
+.wx-ico{font-size:36px;color:var(--tx2);flex-shrink:0}
+.wx-tmp{font-size:28px;font-weight:500;line-height:1}
+.wx-dsc{font-size:13px;color:var(--tx2);margin-top:3px}
+.wx-g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.wx-s{background:var(--bg2);border-radius:var(--r8);padding:.7rem .9rem}
+.wx-k{font-size:11px;color:var(--tx3)}.wx-v{font-size:18px;font-weight:500;margin-top:2px}
+
+/* ── Flights ── */
+.fl-tabs{display:flex;gap:4px;margin-bottom:.9rem;flex-wrap:wrap}
+.fl-tab{font-size:11px;padding:3px 10px;border-radius:100px;border:.5px solid var(--bd2);background:transparent;color:var(--tx2);cursor:pointer;transition:all .12s}
+.fl-tab.active{background:var(--tx);color:var(--bg);border-color:var(--tx)}
+.fl-tab:hover:not(.active){background:var(--bg2)}
+.frow{display:flex;align-items:center;gap:10px;padding:.75rem 0;border-bottom:.5px solid var(--bd)}
+.frow:last-child{border-bottom:none}
+.fflags{font-size:15px;flex-shrink:0;letter-spacing:-2px}
+.finfo{flex:1;min-width:0}
+.froute{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.froute .al{font-weight:400;font-size:12px;color:var(--tx2)}
+.ftimes{font-size:12px;color:var(--tx2);margin-top:2px}
+.fright{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.fprice{font-size:14px;font-weight:500}
+.fl-note{font-size:11px;color:var(--tx3);margin-bottom:.6rem;display:flex;align-items:center;gap:4px}
+.fl-last{font-size:11px;color:var(--tx3);margin-top:.6rem;text-align:right}
+
+/* ── FIFA card ── */
+.fifa-card{background:var(--bg);border:.5px solid var(--bd);border-radius:var(--r12);overflow:hidden}
+.fifa-card-hdr{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.25rem .75rem;border-bottom:.5px solid var(--bd)}
+.fifa-ts{font-size:10px;color:var(--tx3);display:flex;align-items:center;gap:5px}
+
+/* ── LIVE hero ── */
+.live-hero{background:linear-gradient(160deg,#071a07 0%,#0e2a0e 60%,#122812 100%);padding:1.1rem 1.25rem 1rem;position:relative;overflow:hidden}
+@media(prefers-color-scheme:dark){.live-hero{background:linear-gradient(160deg,#050f05 0%,#0a1e0a 60%,#0e220e 100%)}}
+.live-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:60px;background:radial-gradient(ellipse at 50% 0%,rgba(34,197,94,.12) 0%,transparent 100%);pointer-events:none}
+.live-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;letter-spacing:.1em;color:#4ade80;margin-bottom:.85rem;text-transform:uppercase}
+.live-pulse{width:7px;height:7px;border-radius:50%;background:#22c55e;flex-shrink:0;box-shadow:0 0 0 0 rgba(34,197,94,.5);animation:lp 1.5s ease-in-out infinite}
+@keyframes lp{0%{box-shadow:0 0 0 0 rgba(34,197,94,.6)}70%{box-shadow:0 0 0 9px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
+.live-teams{display:flex;align-items:center;gap:4px;margin-bottom:.75rem}
+.live-team{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0}
+.live-flag{font-size:30px;line-height:1}
+.live-tname{font-size:12px;font-weight:600;color:#d1fae5;text-align:center;line-height:1.25;padding:0 4px}
+.live-scorebox{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:2px;padding:0 8px}
+.live-score{font-size:42px;font-weight:900;color:#fff;letter-spacing:4px;line-height:1;font-variant-numeric:tabular-nums;text-shadow:0 0 20px rgba(74,222,128,.3)}
+.live-min{font-size:11px;font-weight:700;color:#4ade80;display:flex;align-items:center;gap:3px;justify-content:center;margin-top:1px}
+.live-period{font-size:10px;color:rgba(209,250,229,.5);text-align:center;margin-top:1px}
+.live-venue{font-size:11px;color:rgba(209,250,229,.45);text-align:center;margin-bottom:.7rem;display:flex;align-items:center;justify-content:center;gap:4px}
+.live-prob{margin-bottom:.65rem}
+.prob-strip{display:flex;height:4px;border-radius:3px;overflow:hidden;gap:1px}
+.prob-h{background:#4ade80}.prob-d{background:rgba(255,255,255,.2)}.prob-a{background:#f87171}
+.prob-labels{display:flex;justify-content:space-between;font-size:10px;color:rgba(209,250,229,.45);margin-top:4px}
+.live-events-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:rgba(209,250,229,.4);margin-bottom:.4rem}
+.live-events{display:flex;flex-direction:column;gap:3px;max-height:120px;overflow-y:auto}
+.live-ev{display:flex;align-items:center;gap:7px;font-size:11px;color:rgba(209,250,229,.75);padding:2px 0}
+.live-ev-min{color:#4ade80;font-weight:700;min-width:22px;font-variant-numeric:tabular-nums;flex-shrink:0}
+.live-ev-ico{font-size:14px;flex-shrink:0}
+.live-ev-txt{flex:1;min-width:0}
+.live-ev-player{font-weight:500}
+.live-ev-detail{color:rgba(209,250,229,.45);font-size:10px}
+.live-ev-team{color:rgba(209,250,229,.4);font-size:10px;text-align:right;flex-shrink:0}
+
+/* ── Section dividers ── */
+.section-divider{display:flex;align-items:center;gap:8px;padding:.7rem 1.25rem .4rem;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--tx3);border-top:.5px solid var(--bd)}
+.section-divider i{font-size:12px}
+
+/* ── Upcoming rows ── */
+.up-row{display:flex;align-items:center;gap:10px;padding:.7rem 1.25rem;border-bottom:.5px solid var(--bd)}
+.up-row:last-child{border-bottom:none}
+.up-flags{font-size:16px;letter-spacing:-4px;flex-shrink:0;width:32px}
+.up-body{flex:1;min-width:0}
+.up-teams{font-size:13px;font-weight:500;color:var(--tx);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.up-meta{font-size:11px;color:var(--tx3);margin-top:2px;display:flex;align-items:center;gap:5px}
+.up-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.up-time{font-size:12px;font-weight:600;color:var(--tx);white-space:nowrap}
+.up-date{font-size:10px;color:var(--tx3)}
+.up-prob-bar{width:48px;height:2.5px;background:var(--bg2);border-radius:2px;overflow:hidden}
+.up-ph{background:var(--info);height:100%}
+
+/* ── Result rows ── */
+.res-row{display:flex;align-items:center;gap:10px;padding:.55rem 1.25rem;border-bottom:.5px solid var(--bd)}
+.res-row:last-child{border-bottom:none}
+.res-flags{font-size:13px;letter-spacing:-3px;flex-shrink:0;width:26px}
+.res-teams{flex:1;min-width:0;font-size:12px;color:var(--tx2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.res-score{font-size:13px;font-weight:700;color:var(--tx);flex-shrink:0;font-variant-numeric:tabular-nums;letter-spacing:.5px}
+.res-date{font-size:10px;color:var(--tx3);flex-shrink:0;text-align:right;min-width:38px}
+.res-row.winner-h .res-teams{color:var(--tx)}
+.res-row.winner-a .res-score{opacity:.7}
+
+/* ── Chips / misc ── */
+.chip{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:500;padding:2px 7px;border-radius:100px}
+.cg{background:var(--cg-bg);color:var(--cg)}.ca{background:var(--ca-bg);color:var(--ca)}
+.cr{background:var(--cr-bg);color:var(--cr)}.cb{background:var(--cb-bg);color:var(--cb)}
+.sk{background:var(--bg2);border-radius:var(--r8);animation:sk 1.4s ease-in-out infinite}
+@keyframes sk{0%,100%{opacity:.45}50%{opacity:1}}
+.emsg{font-size:13px;color:var(--err);display:flex;align-items:flex-start;gap:5px;padding:.4rem 0;line-height:1.5}
+
+/* score flash on update */
+@keyframes scoreflash{0%{text-shadow:0 0 30px rgba(74,222,128,.9),0 0 0 rgba(74,222,128,.5)}100%{text-shadow:0 0 20px rgba(74,222,128,.3)}}
+.score-updated{animation:scoreflash .8s ease-out}
+
+@media(max-width:520px){.wx-g{grid-template-columns:repeat(2,1fr)}.ftimes{display:none}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><i class="ti ti-layout-dashboard"></i></div>
+  <div>
+    <h1>Hub</h1>
+    <span class="sub">Zaki · Search · Weather · Flights · FIFA World Cup</span>
+  </div>
+  <div class="hdr-r" id="clock"></div>
+</header>
+
+<div class="page">
+  <div class="col-l">
+
+    <!-- SEARCH -->
+    <div class="card">
+      <div class="card-hdr">
+        <div class="slabel"><i class="ti ti-search"></i> Web search</div>
+      </div>
+      <div class="srow">
+        <input type="text" id="q" placeholder="Zaki's search window - type anything and press Enter…" autocomplete="off" aria-label="Search">
+        <button class="sbtn" onclick="doSearch()"><i class="ti ti-search"></i> Search</button>
+      </div>
+      <div id="search-out" style="margin-top:.25rem"></div>
+    </div>
+
+    <!-- WEATHER -->
+    <div class="card">
+      <div class="card-hdr">
+        <div class="slabel"><i class="ti ti-cloud"></i> Current weather</div>
+        <button class="rbtn" onclick="loadWeather()"><i class="ti ti-refresh"></i> Refresh</button>
+      </div>
+      <div id="wx-out"><div class="sk" style="height:100px"></div></div>
+    </div>
+
+    <!-- FLIGHTS -->
+    <div class="card">
+      <div class="card-hdr">
+        <div class="slabel"><i class="ti ti-plane"></i> Global budget flights</div>
+        <button class="rbtn" id="fl-rbtn" onclick="loadFlights()"><i class="ti ti-refresh"></i> Refresh</button>
+      </div>
+      <div class="fl-tabs" id="fl-tabs">
+        <button class="fl-tab active" data-r="all">All regions</button>
+        <button class="fl-tab" data-r="europe">Europe</button>
+        <button class="fl-tab" data-r="americas">Americas</button>
+        <button class="fl-tab" data-r="asia">Asia-Pacific</button>
+        <button class="fl-tab" data-r="africa">Africa & ME</button>
+      </div>
+      <div id="fl-out"><div class="sk" style="height:200px"></div></div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT COLUMN: FIFA -->
+  <div class="col-r">
+    <div class="fifa-card" id="fifa-card">
+      <div class="fifa-card-hdr">
+        <div class="slabel"><i class="ti ti-trophy"></i> FIFA World Cup 2026</div>
+        <div class="fifa-ts" id="fifa-ts">
+          <span id="fifa-auto-label" style="display:none"><i class="ti ti-refresh" style="font-size:10px"></i> auto</span>
+          <span id="fifa-updated"></span>
+          <button class="rbtn" id="fifa-rbtn" onclick="triggerFifaRefresh()" style="padding:1px 4px"><i class="ti ti-refresh" id="fifa-ico"></i></button>
+        </div>
+      </div>
+      <div id="fifa-body"><div style="padding:1.25rem"><div class="sk" style="height:280px"></div></div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── Utilities ────────────────────────────────────────────────────────────────
+const PROXY = u => `https://api.allorigins.win/get?url=${encodeURIComponent(u)}`;
+const $  = id => document.getElementById(id);
+
+setInterval(()=>{
+  $('clock').textContent = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}, 1000);
+
+// ─── SEARCH ───────────────────────────────────────────────────────────────────
+async function doSearch(){
+  const q=$('q').value.trim(); if(!q)return;
+  const out=$('search-out');
+  out.innerHTML=[1,2,3].map(()=>`<div class="sk" style="height:18px;margin:10px 0"></div>`).join('');
+  try{
+    const r=await fetch(PROXY(`https://html.duckduckgo.com/html/?q=${encodeURIComponent(q)}`));
+    const d=await r.json();
+    const doc=new DOMParser().parseFromString(d.contents,'text/html');
+    const items=Array.from(doc.querySelectorAll('.result__body')).slice(0,8);
+    if(!items.length){out.innerHTML=`<p style="color:var(--tx3);font-size:13px;padding:.5rem 0">No results.</p>`;return;}
+    out.innerHTML=`<div style="margin-top:.5rem">`+items.map(el=>{
+      const a=el.querySelector('.result__a'),snip=el.querySelector('.result__snippet'),urlEl=el.querySelector('.result__url');
+      if(!a)return'';
+      let raw=a.getAttribute('href')||'',href=raw;
+      try{
+        if(raw.includes('/l/?')||raw.includes('duckduckgo.com/l/')){
+          const p=new URL('https://duckduckgo.com'+raw).searchParams;
+          const u=p.get('uddg')||p.get('u3')||''; if(u)href=decodeURIComponent(u);
+        }else if(raw.startsWith('//')){href='https:'+raw;}
+      }catch(e){}
+      return`<div class="ri"><a class="rt" href="${href}" target="_blank" rel="noopener">${a.textContent.trim()}</a>${urlEl?`<div class="ru">${urlEl.textContent.trim()}</div>`:''}${snip?`<div class="rd">${snip.textContent.trim()}</div>`:''}</div>`;
+    }).join('')+`</div>`;
+  }catch(e){
+    out.innerHTML=`<div class="emsg"><i class="ti ti-alert-circle"></i>Proxy unavailable. <a href="https://duckduckgo.com/?q=${encodeURIComponent(q)}" target="_blank" style="color:var(--info)">Open DuckDuckGo ↗</a></div>`;
+  }
+}
+$('q').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch();});
+
+// ─── WEATHER ──────────────────────────────────────────────────────────────────
+const WXI={0:'ti-sun',1:'ti-sun',2:'ti-cloud-sun',3:'ti-cloud',45:'ti-mist',48:'ti-mist',51:'ti-cloud-drizzle',61:'ti-cloud-rain',71:'ti-snowflake',80:'ti-cloud-rain',95:'ti-storm',99:'ti-storm'};
+const WXD={0:'Clear sky',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',45:'Fog',48:'Icy fog',51:'Light drizzle',61:'Rain',71:'Snow',80:'Showers',95:'Thunderstorm',99:'Heavy thunderstorm'};
+function renderWx(city,country,lat,lon,note){
+  fetch(`https://api.open-meteo.com/v1/forecast?latitude=${(+lat).toFixed(4)}&longitude=${(+lon).toFixed(4)}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code,apparent_temperature&wind_speed_unit=kmh&timezone=auto`)
+  .then(r=>r.json()).then(d=>{
+    const c=d.current,code=c.weather_code;
+    $('wx-out').innerHTML=`
+      <div class="wx-loc"><i class="ti ti-map-pin" style="font-size:13px"></i>${city}${country?', '+country:''}${note?` <span style="opacity:.6">(${note})</span>`:''}</div>
+      <div class="wx-hdr"><i class="ti ${WXI[code]||'ti-cloud'} wx-ico"></i><div><div class="wx-tmp">${Math.round(c.temperature_2m)}°C</div><div class="wx-dsc">${WXD[code]||'Unknown'}</div></div></div>
+      <div class="wx-g">
+        <div class="wx-s"><div class="wx-k">Feels like</div><div class="wx-v">${Math.round(c.apparent_temperature)}°C</div></div>
+        <div class="wx-s"><div class="wx-k">Humidity</div><div class="wx-v">${Math.round(c.relative_humidity_2m)}%</div></div>
+        <div class="wx-s"><div class="wx-k">Wind</div><div class="wx-v">${Math.round(c.wind_speed_10m)} km/h</div></div>
+      </div>`;
+  }).catch(()=>{$('wx-out').innerHTML=`<div class="emsg"><i class="ti ti-alert-circle"></i>Weather unavailable.</div>`;});
+}
+async function loadWeatherIP(){
+  try{const r=await fetch('https://ipapi.co/json/');const d=await r.json();renderWx(d.city||'Unknown',d.country_name||'',d.latitude,d.longitude,'approx.');}
+  catch{$('wx-out').innerHTML=`<div class="emsg"><i class="ti ti-alert-circle"></i>Weather unavailable.</div>`;}
+}
+function loadWeather(){
+  $('wx-out').innerHTML=`<div class="sk" style="height:100px"></div>`;
+  if(!navigator.geolocation){loadWeatherIP();return;}
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    const{latitude:lat,longitude:lon}=pos.coords;
+    try{
+      const r=await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+      const d=await r.json();
+      renderWx(d.address?.city||d.address?.town||d.address?.village||'Your location',d.address?.country||'',lat,lon,'');
+    }catch{renderWx('Your location','',lat,lon,'');}
+  },()=>loadWeatherIP(),{timeout:7000});
+}
+
+// ─── FLIGHTS ──────────────────────────────────────────────────────────────────
+const GLOBAL_ROUTES=[
+  {from:'London',to:'Amsterdam',iata:'LHR→AMS',flags:'🇬🇧🇳🇱',al:'easyJet',dep:'07:15',arr:'09:40',dur:'1h 25m',base:49,region:'europe'},
+  {from:'Paris',to:'Barcelona',iata:'CDG→BCN',flags:'🇫🇷🇪🇸',al:'Vueling',dep:'08:00',arr:'09:55',dur:'1h 55m',base:62,region:'europe'},
+  {from:'Berlin',to:'Warsaw',iata:'BER→WAW',flags:'🇩🇪🇵🇱',al:'LOT',dep:'10:30',arr:'11:50',dur:'1h 20m',base:55,region:'europe'},
+  {from:'Madrid',to:'Lisbon',iata:'MAD→LIS',flags:'🇪🇸🇵🇹',al:'Iberia',dep:'13:00',arr:'14:05',dur:'1h 05m',base:38,region:'europe'},
+  {from:'Rome',to:'Athens',iata:'FCO→ATH',flags:'🇮🇹🇬🇷',al:'Ryanair',dep:'14:20',arr:'17:00',dur:'2h 40m',base:74,region:'europe'},
+  {from:'Amsterdam',to:'Copenhagen',iata:'AMS→CPH',flags:'🇳🇱🇩🇰',al:'KLM',dep:'11:45',arr:'13:15',dur:'1h 30m',base:88,region:'europe'},
+  {from:'Vienna',to:'Prague',iata:'VIE→PRG',flags:'🇦🇹🇨🇿',al:'Austrian',dep:'16:00',arr:'17:05',dur:'1h 05m',base:44,region:'europe'},
+  {from:'Stockholm',to:'Helsinki',iata:'ARN→HEL',flags:'🇸🇪🇫🇮',al:'Finnair',dep:'09:00',arr:'10:15',dur:'1h 15m',base:67,region:'europe'},
+  {from:'Brussels',to:'Zurich',iata:'BRU→ZRH',flags:'🇧🇪🇨🇭',al:'Swiss',dep:'12:30',arr:'14:10',dur:'1h 40m',base:91,region:'europe'},
+  {from:'Warsaw',to:'Budapest',iata:'WAW→BUD',flags:'🇵🇱🇭🇺',al:'Wizz Air',dep:'06:50',arr:'07:55',dur:'1h 05m',base:21,region:'europe'},
+  {from:'Dublin',to:'Amsterdam',iata:'DUB→AMS',flags:'🇮🇪🇳🇱',al:'Aer Lingus',dep:'07:40',arr:'10:20',dur:'1h 40m',base:57,region:'europe'},
+  {from:'New York',to:'Miami',iata:'JFK→MIA',flags:'🇺🇸🇺🇸',al:'JetBlue',dep:'07:00',arr:'10:15',dur:'3h 15m',base:89,region:'americas'},
+  {from:'Los Angeles',to:'Seattle',iata:'LAX→SEA',flags:'🇺🇸🇺🇸',al:'Alaska Air',dep:'06:30',arr:'08:45',dur:'2h 15m',base:72,region:'americas'},
+  {from:'Chicago',to:'Toronto',iata:'ORD→YYZ',flags:'🇺🇸🇨🇦',al:'Air Canada',dep:'11:00',arr:'14:30',dur:'1h 30m',base:65,region:'americas'},
+  {from:'Miami',to:'Bogotá',iata:'MIA→BOG',flags:'🇺🇸🇨🇴',al:'Avianca',dep:'08:00',arr:'11:45',dur:'3h 45m',base:120,region:'americas'},
+  {from:'São Paulo',to:'Buenos Aires',iata:'GRU→EZE',flags:'🇧🇷🇦🇷',al:'LATAM',dep:'07:15',arr:'09:50',dur:'2h 35m',base:98,region:'americas'},
+  {from:'Mexico City',to:'Cancún',iata:'MEX→CUN',flags:'🇲🇽🇲🇽',al:'Volaris',dep:'08:30',arr:'10:10',dur:'1h 40m',base:44,region:'americas'},
+  {from:'Lima',to:'Santiago',iata:'LIM→SCL',flags:'🇵🇪🇨🇱',al:'LATAM',dep:'09:00',arr:'12:30',dur:'3h 30m',base:82,region:'americas'},
+  {from:'New York',to:'London',iata:'JFK→LHR',flags:'🇺🇸🇬🇧',al:'Norse Atlantic',dep:'21:00',arr:'09:00',dur:'7h 00m',base:199,region:'americas'},
+  {from:'Tokyo',to:'Seoul',iata:'NRT→ICN',flags:'🇯🇵🇰🇷',al:'ANA',dep:'07:30',arr:'10:05',dur:'2h 35m',base:95,region:'asia'},
+  {from:'Singapore',to:'Bangkok',iata:'SIN→BKK',flags:'🇸🇬🇹🇭',al:'Scoot',dep:'08:00',arr:'09:30',dur:'2h 30m',base:55,region:'asia'},
+  {from:'Kuala Lumpur',to:'Jakarta',iata:'KUL→CGK',flags:'🇲🇾🇮🇩',al:'AirAsia',dep:'07:00',arr:'08:10',dur:'1h 10m',base:38,region:'asia'},
+  {from:'Sydney',to:'Melbourne',iata:'SYD→MEL',flags:'🇦🇺🇦🇺',al:'Jetstar',dep:'06:00',arr:'07:30',dur:'1h 30m',base:61,region:'asia'},
+  {from:'Hong Kong',to:'Taipei',iata:'HKG→TPE',flags:'🇭🇰🇹🇼',al:'Cathay Pacific',dep:'08:15',arr:'10:05',dur:'1h 50m',base:78,region:'asia'},
+  {from:'Bangkok',to:'Hanoi',iata:'BKK→HAN',flags:'🇹🇭🇻🇳',al:'VietJet',dep:'10:00',arr:'12:05',dur:'2h 05m',base:42,region:'asia'},
+  {from:'Mumbai',to:'Dubai',iata:'BOM→DXB',flags:'🇮🇳🇦🇪',al:'IndiGo',dep:'02:15',arr:'04:15',dur:'3h 00m',base:88,region:'asia'},
+  {from:'Auckland',to:'Sydney',iata:'AKL→SYD',flags:'🇳🇿🇦🇺',al:'Qantas',dep:'09:00',arr:'11:10',dur:'3h 10m',base:85,region:'asia'},
+  {from:'Dubai',to:'Riyadh',iata:'DXB→RUH',flags:'🇦🇪🇸🇦',al:'Emirates',dep:'08:00',arr:'09:10',dur:'1h 10m',base:68,region:'africa'},
+  {from:'Cairo',to:'Beirut',iata:'CAI→BEY',flags:'🇪🇬🇱🇧',al:'EgyptAir',dep:'09:00',arr:'10:30',dur:'1h 30m',base:55,region:'africa'},
+  {from:'Nairobi',to:'Johannesburg',iata:'NBO→JNB',flags:'🇰🇪🇿🇦',al:'Kenya Airways',dep:'08:30',arr:'12:45',dur:'4h 15m',base:112,region:'africa'},
+  {from:'Casablanca',to:'Paris',iata:'CMN→CDG',flags:'🇲🇦🇫🇷',al:'Royal Air Maroc',dep:'07:00',arr:'11:15',dur:'3h 15m',base:95,region:'africa'},
+  {from:'Istanbul',to:'Cairo',iata:'IST→CAI',flags:'🇹🇷🇪🇬',al:'Turkish Airlines',dep:'07:15',arr:'09:00',dur:'2h 45m',base:79,region:'africa'},
+  {from:'Lagos',to:'Accra',iata:'LOS→ACC',flags:'🇳🇬🇬🇭',al:'Air Peace',dep:'10:00',arr:'10:55',dur:'0h 55m',base:82,region:'africa'},
+  {from:'Addis Ababa',to:'Nairobi',iata:'ADD→NBO',flags:'🇪🇹🇰🇪',al:'Ethiopian',dep:'07:30',arr:'09:30',dur:'2h 00m',base:64,region:'africa'},
+];
+function dayPrice(base,seed){
+  const t=new Date(),s=t.getFullYear()*10000+(t.getMonth()+1)*100+t.getDate()+seed;
+  return Math.round(base*(0.87+((s*9301+49297)%233280)/233280*.26));
+}
+function flStatus(i){
+  const n=(i*7+new Date().getDay()*3)%20;
+  if(n<13)return{l:'On time',c:'cg'};if(n<16)return{l:'Delayed',c:'ca'};if(n<18)return{l:'Boarding',c:'cb'};return{l:'On time',c:'cg'};
+}
+let flRegion='all';
+$('fl-tabs').addEventListener('click',e=>{
+  const t=e.target.closest('.fl-tab');if(!t)return;
+  document.querySelectorAll('.fl-tab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');flRegion=t.dataset.r;renderFlights();
+});
+function loadFlights(){
+  const i=$('fl-rbtn')?.querySelector('i');if(i)i.classList.add('spin');
+  setTimeout(()=>{renderFlights();if(i)i.classList.remove('spin');},350);
+}
+function renderFlights(){
+  const routes=flRegion==='all'?GLOBAL_ROUTES:GLOBAL_ROUTES.filter(r=>r.region===flRegion);
+  const today=new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+  $('fl-out').innerHTML=
+    `<div class="fl-note"><i class="ti ti-calendar-event" style="font-size:12px"></i>Flights for <strong>${today}</strong></div>`+
+    routes.map((f,i)=>{
+      const st=flStatus(i);
+      return`<div class="frow">
+        <span class="fflags">${f.flags}</span>
+        <div class="finfo">
+          <div class="froute">${f.iata} <span class="al">· ${f.al}</span></div>
+          <div class="ftimes">${f.from} → ${f.to} · ${f.dep}–${f.arr} · ${f.dur}</div>
+        </div>
+        <div class="fright">
+          <div class="fprice">$${dayPrice(f.base,i)}</div>
+          <span class="chip ${st.c}">${st.l}</span>
+        </div>
+      </div>`;
+    }).join('')+
+    `<div class="fl-last"><i class="ti ti-refresh" style="font-size:11px"></i> Updated ${new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div>`;
+}
+
+// ─── FIFA WORLD CUP 2026 — REAL-TIME ─────────────────────────────────────────
+
+const FLAGS={
+  USA:'🇺🇸',CAN:'🇨🇦',MEX:'🇲🇽',BRA:'🇧🇷',ARG:'🇦🇷',FRA:'🇫🇷',GER:'🇩🇪',ENG:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',
+  ESP:'🇪🇸',POR:'🇵🇹',NED:'🇳🇱',BEL:'🇧🇪',ITA:'🇮🇹',URU:'🇺🇾',COL:'🇨🇴',CHI:'🇨🇱',
+  KOR:'🇰🇷',JPN:'🇯🇵',AUS:'🇦🇺',NZL:'🇳🇿',MAR:'🇲🇦',SEN:'🇸🇳',NGA:'🇳🇬',GHA:'🇬🇭',
+  CMR:'🇨🇲',TUN:'🇹🇳',EGY:'🇪🇬',DZA:'🇩🇿',KSA:'🇸🇦',IRN:'🇮🇷',IRQ:'🇮🇶',JOR:'🇯🇴',
+  QAT:'🇶🇦',SCO:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',TUR:'🇹🇷',PAR:'🇵🇾',ECU:'🇪🇨',CUW:'🇨🇼',HTI:'🇭🇹',SWE:'🇸🇪',
+  CIV:'🇨🇮',NOR:'🇳🇴',AUT:'🇦🇹',CPV:'🇨🇻',UZB:'🇺🇿',PAN:'🇵🇦',CRO:'🇭🇷',SVN:'🇸🇮',
+  SUI:'🇨🇭',BIH:'🇧🇦',COD:'🇨🇩',HTI:'🇭🇹',
+};
+const gf = c => FLAGS[c] || '🏳';
+
+const VENUES={
+  USA:{v:'SoFi Stadium',         c:'Los Angeles',      lat:33.9535, lon:-118.3392},
+  CAN:{v:'BMO Field',            c:'Toronto',          lat:43.6331, lon:-79.4179},
+  MEX:{v:'Estadio Azteca',       c:'Mexico City',      lat:19.3029, lon:-99.1505},
+  BRA:{v:'MetLife Stadium',      c:'East Rutherford',  lat:40.8135, lon:-74.0745},
+  ARG:{v:'MetLife Stadium',      c:'East Rutherford',  lat:40.8135, lon:-74.0745},
+  ESP:{v:'SoFi Stadium',         c:'Los Angeles',      lat:33.9535, lon:-118.3392},
+  BEL:{v:'Arrowhead Stadium',    c:'Kansas City',      lat:39.0489, lon:-94.4839},
+  URU:{v:'AT&T Stadium',         c:'Arlington, TX',    lat:32.7481, lon:-97.0930},
+  NZL:{v:'Lumen Field',          c:'Seattle',          lat:47.5952, lon:-122.3316},
+  FRA:{v:'Hard Rock Stadium',    c:'Miami',            lat:25.9580, lon:-80.2389},
+  NOR:{v:'Mercedes-Benz Stadium',c:'Atlanta',          lat:33.7554, lon:-84.4008},
+  JOR:{v:'NRG Stadium',          c:'Houston',          lat:29.6847, lon:-95.4107},
+  POR:{v:'Gillette Stadium',     c:'Boston',           lat:42.0909, lon:-71.2643},
+  ENG:{v:'MetLife Stadium',      c:'East Rutherford',  lat:40.8135, lon:-74.0745},
+  GER:{v:'AT&T Stadium',         c:'Arlington, TX',    lat:32.7481, lon:-97.0930},
+  SCO:{v:'Rose Bowl',            c:'Pasadena',         lat:34.0139, lon:-118.2874},
+  TUN:{v:'Arrowhead Stadium',    c:'Kansas City',      lat:39.0489, lon:-94.4839},
+  ECU:{v:"Levi's Stadium",       c:'Santa Clara',      lat:37.4032, lon:-121.9698},
+  TUR:{v:'Mercedes-Benz Stadium',c:'Atlanta',          lat:33.7554, lon:-84.4008},
+  NED:{v:'Lincoln Financial Field',c:'Philadelphia',   lat:39.9008, lon:-75.1675},
+  PAN:{v:'Estadio Azteca',       c:'Mexico City',      lat:19.3029, lon:-99.1505},
+  COL:{v:'Hard Rock Stadium',    c:'Miami',            lat:25.9580, lon:-80.2389},
+  SUI:{v:'Rose Bowl',            c:'Pasadena',         lat:34.0139, lon:-118.2874},
+  BIH:{v:'Lumen Field',          c:'Seattle',          lat:47.5952, lon:-122.3316},
+};
+const getVenue = c => VENUES[c] || {v:'World Cup 2026',c:'USA',lat:39.5,lon:-98.35};
+
+// Previous scores cache for flash animation
+const prevScores = {};
+
+// The full schedule seed — statuses + scores get overwritten by live API
+const WC_SEED = [
+  {id:'1',status:'final',st:'2026-06-18T22:00:00Z',home:'CAN',away:'QAT',s:{CAN:6,QAT:0}},
+  {id:'2',status:'final',st:'2026-06-19T01:00:00Z',home:'MEX',away:'KOR',s:{MEX:1,KOR:0}},
+  {id:'3',status:'final',st:'2026-06-19T19:00:00Z',home:'USA',away:'AUS',s:{USA:2,AUS:0}},
+  {id:'4',status:'final',st:'2026-06-19T22:00:00Z',home:'SCO',away:'MAR',s:{SCO:0,MAR:1}},
+  {id:'5',status:'final',st:'2026-06-20T00:30:00Z',home:'BRA',away:'HTI',s:{BRA:3,HTI:0}},
+  {id:'6',status:'final',st:'2026-06-20T03:00:00Z',home:'TUR',away:'PAR',s:{TUR:0,PAR:1}},
+  {id:'7',status:'final',st:'2026-06-20T17:00:00Z',home:'NED',away:'SWE',s:{NED:5,SWE:1}},
+  {id:'8',status:'final',st:'2026-06-20T20:00:00Z',home:'GER',away:'CIV',s:{GER:2,CIV:1}},
+  {id:'9',status:'final',st:'2026-06-21T00:00:00Z',home:'ECU',away:'CUW',s:{ECU:0,CUW:0}},
+  {id:'10',status:'final',st:'2026-06-21T04:00:00Z',home:'TUN',away:'JPN',s:{TUN:0,JPN:4}},
+  {id:'11',status:'final',st:'2026-06-21T16:00:00Z',home:'ESP',away:'KSA',s:{ESP:4,KSA:0}},
+  {id:'12',status:'final',st:'2026-06-21T19:00:00Z',home:'BEL',away:'IRN',s:{BEL:0,IRN:0}},
+  {id:'13',status:'final',st:'2026-06-21T22:00:00Z',home:'URU',away:'CPV',s:{URU:2,CPV:2}},
+  {id:'14',status:'final',st:'2026-06-22T01:00:00Z',home:'NZL',away:'EGY',s:{NZL:1,EGY:3}},
+  {id:'15',status:'final',st:'2026-06-22T17:00:00Z',home:'ARG',away:'AUT',s:{ARG:2,AUT:0}},
+  {id:'16',status:'scheduled',st:'2026-06-22T21:00:00Z',home:'FRA',away:'IRQ',s:{FRA:0,IRQ:0},prob:{FRA:91,IRQ:2.4,draw:6.3}},
+  {id:'17',status:'scheduled',st:'2026-06-23T00:00:00Z',home:'NOR',away:'SEN',s:{NOR:0,SEN:0},prob:{NOR:42,SEN:30,draw:28}},
+  {id:'18',status:'scheduled',st:'2026-06-23T03:00:00Z',home:'JOR',away:'DZA',s:{JOR:0,DZA:0},prob:{JOR:15,DZA:63,draw:22}},
+  {id:'19',status:'scheduled',st:'2026-06-23T17:00:00Z',home:'POR',away:'UZB',s:{POR:0,UZB:0},prob:{POR:82,UZB:6,draw:12}},
+  {id:'20',status:'scheduled',st:'2026-06-23T20:00:00Z',home:'ENG',away:'GHA',s:{ENG:0,GHA:0},prob:{ENG:80,GHA:6,draw:14}},
+  {id:'21',status:'scheduled',st:'2026-06-23T23:00:00Z',home:'PAN',away:'CRO',s:{PAN:0,CRO:0},prob:{PAN:14,CRO:64,draw:22}},
+  {id:'22',status:'scheduled',st:'2026-06-24T02:00:00Z',home:'COL',away:'COD',s:{COL:0,COD:0},prob:{COL:62,COD:15,draw:23}},
+  {id:'23',status:'scheduled',st:'2026-06-24T19:00:00Z',home:'SUI',away:'CAN',s:{SUI:0,CAN:0},prob:{SUI:39,CAN:30,draw:31}},
+  {id:'24',status:'scheduled',st:'2026-06-24T19:00:00Z',home:'BIH',away:'QAT',s:{BIH:0,QAT:0},prob:{BIH:67,QAT:14,draw:19}},
+  {id:'25',status:'scheduled',st:'2026-06-24T22:00:00Z',home:'SCO',away:'BRA',s:{SCO:0,BRA:0},prob:{SCO:12,BRA:70,draw:18}},
+  {id:'26',status:'scheduled',st:'2026-06-25T00:00:00Z',home:'GER',away:'USA',s:{GER:0,USA:0},prob:{GER:44,USA:32,draw:24}},
+  {id:'27',status:'scheduled',st:'2026-06-25T17:00:00Z',home:'ESP',away:'BEL',s:{ESP:0,BEL:0},prob:{ESP:55,BEL:22,draw:23}},
+  {id:'28',status:'scheduled',st:'2026-06-25T20:00:00Z',home:'FRA',away:'NOR',s:{FRA:0,NOR:0},prob:{FRA:62,NOR:18,draw:20}},
+  {id:'29',status:'scheduled',st:'2026-06-25T23:00:00Z',home:'POR',away:'ENG',s:{POR:0,ENG:0},prob:{POR:42,ENG:36,draw:22}},
+  {id:'30',status:'scheduled',st:'2026-06-26T17:00:00Z',home:'JPN',away:'KOR',s:{JPN:0,KOR:0},prob:{JPN:40,KOR:35,draw:25}},
+  {id:'31',status:'scheduled',st:'2026-06-26T20:00:00Z',home:'AUS',away:'URU',s:{AUS:0,URU:0},prob:{AUS:28,URU:48,draw:24}},
+  {id:'32',status:'scheduled',st:'2026-06-26T23:00:00Z',home:'MAR',away:'DZA',s:{MAR:0,DZA:0},prob:{MAR:44,DZA:32,draw:24}},
+];
+
+// Normalise a SofaScore event into our format
+function normalizeSofa(e){
+  const h=e.homeTeam?.nameCode||'HOM', a=e.awayTeam?.nameCode||'AWY';
+  const st=e.status?.type;
+  return{
+    id:String(e.id),
+    status: st==='inprogress'?'in_progress': st==='finished'?'final':'scheduled',
+    st: new Date(e.startTimestamp*1000).toISOString(),
+    home:h, away:a,
+    hn:e.homeTeam?.name||h, an:e.awayTeam?.name||a,
+    s:{[h]:e.homeScore?.current??0,[a]:e.awayScore?.current??0},
+    elapsed: e.time?.currentPeriodStartTimestamp
+      ? Math.floor((Date.now()/1000 - e.time.currentPeriodStartTimestamp)/60) + (e.time.injuryTime1||0)
+      : null,
+    period: e.status?.description||null,
+    prob: null,
+  };
+}
+
+let cachedGames = null;
+
+// Fetch today+yesterday+tomorrow from SofaScore
+async function fetchSofaDay(dateStr){
+  const r=await fetch(PROXY(`https://api.sofascore.com/api/v1/sport/football/scheduled-events/${dateStr}`));
+  const d=await r.json();
+  return (d.events||[]).filter(e=>
+    (e.tournament?.name||'').toLowerCase().includes('world cup')||
+    (e.tournament?.uniqueTournament?.name||'').toLowerCase().includes('world cup')
+  );
+}
+
+async function fetchLiveData(){
+  const dates=[];
+  const now=new Date();
+  for(let i=-1;i<=2;i++){const d=new Date(now);d.setDate(d.getDate()+i);dates.push(d.toISOString().slice(0,10));}
+
+  const all=[];
+  await Promise.allSettled(dates.map(async d=>{
+    try{ const ev=await fetchSofaDay(d); all.push(...ev); }catch{}
+  }));
+
+  if(all.length===0) return null;
+
+  // Deduplicate by id
+  const seen=new Set(), unique=[];
+  all.forEach(e=>{if(!seen.has(e.id)){seen.add(e.id);unique.push(e);}});
+  return unique.map(normalizeSofa);
+}
+
+// Merge live API data with seed (for names + probabilities)
+function mergeWithSeed(liveGames){
+  return liveGames.map(g=>{
+    const seed=WC_SEED.find(s=>s.home===g.home&&s.away===g.away);
+    return seed ? {...g, hn:g.hn||seed.home, an:g.an||seed.away, prob:seed.prob||null} : g;
+  });
+}
+
+// Build full game list: live API for recent/ongoing, seed for future
+function buildGameList(liveGames){
+  const merged=mergeWithSeed(liveGames);
+  // Add seed games not in live data (future fixtures)
+  WC_SEED.forEach(s=>{
+    if(!merged.find(g=>g.home===s.home&&g.away===s.away)){
+      merged.push({id:s.id,status:s.status,st:s.st,home:s.home,away:s.away,hn:null,an:null,s:s.s,prob:s.prob||null,elapsed:null,period:null});
+    }
+  });
+  return merged.sort((a,b)=>new Date(a.st)-new Date(b.st));
+}
+
+// ── Render ────────────────────────────────────────────────────────────────────
+function renderFifaPanel(games){
+  const live    = games.filter(g=>g.status==='in_progress');
+  const upcoming= games.filter(g=>g.status==='scheduled').slice(0,10);
+  const results = games.filter(g=>g.status==='final').reverse().slice(0,12);
+
+  let html='';
+
+  // ── LIVE ──
+  if(live.length){
+    html+=`<div class="section-divider" style="color:#22c55e;border-top:none;padding-top:.75rem"><div class="live-pulse"></div> Live now</div>`;
+    live.forEach(g=>{ html+=renderLiveCard(g); });
+  }
+
+  // ── UPCOMING ──
+  if(upcoming.length){
+    html+=`<div class="section-divider" style="${live.length?'':'border-top:none;padding-top:.75rem'}"><i class="ti ti-calendar-event"></i> Upcoming</div>`;
+    upcoming.forEach(g=>{ html+=renderUpcomingRow(g); });
+  }
+
+  // ── RESULTS ──
+  if(results.length){
+    html+=`<div class="section-divider"><i class="ti ti-check"></i> Results</div>`;
+    results.forEach(g=>{ html+=renderResultRow(g); });
+  }
+
+  if(!live.length&&!upcoming.length&&!results.length){
+    html=`<div style="padding:2rem 1.25rem;text-align:center;color:var(--tx3);font-size:13px">No match data available</div>`;
+  }
+
+  $('fifa-body').innerHTML=html;
+
+  // Flash score if changed
+  live.forEach(g=>{
+    const key=g.id, newScore=`${g.s[g.home]}-${g.s[g.away]}`;
+    const el=document.querySelector(`[data-score-id="${key}"]`);
+    if(el&&prevScores[key]&&prevScores[key]!==newScore){
+      el.classList.remove('score-updated');
+      void el.offsetWidth;
+      el.classList.add('score-updated');
+    }
+    prevScores[key]=newScore;
+  });
+}
+
+function renderLiveCard(g){
+  const v=getVenue(g.home);
+  const hs=g.s[g.home]??0, as=g.s[g.away]??0;
+  const prob=g.prob;
+  const probHtml=prob?`
+    <div class="live-prob">
+      <div class="prob-strip">
+        <div class="prob-h" style="width:${prob[g.home]||0}%"></div>
+        <div class="prob-d" style="width:${prob.draw||0}%"></div>
+        <div class="prob-a" style="width:${prob[g.away]||0}%"></div>
+      </div>
+      <div class="prob-labels"><span>${Math.round(prob[g.home]||0)}%</span><span>Draw ${Math.round(prob.draw||0)}%</span><span>${Math.round(prob[g.away]||0)}%</span></div>
+    </div>`:'';
+  const elapsed=g.elapsed!=null?`${g.elapsed}'`:(g.period||'Live');
+  return`<div class="live-hero">
+    <div class="live-badge"><div class="live-pulse"></div> LIVE MATCH</div>
+    <div class="live-teams">
+      <div class="live-team">
+        <div class="live-flag">${gf(g.home)}</div>
+        <div class="live-tname">${g.hn||g.home}</div>
+      </div>
+      <div class="live-scorebox">
+        <div class="live-score" data-score-id="${g.id}">${hs} – ${as}</div>
+        <div class="live-min"><i class="ti ti-clock" style="font-size:10px"></i>${elapsed}</div>
+        <div class="live-period">${g.period||'In Progress'}</div>
+      </div>
+      <div class="live-team">
+        <div class="live-flag">${gf(g.away)}</div>
+        <div class="live-tname">${g.an||g.away}</div>
+      </div>
+    </div>
+    <div class="live-venue"><i class="ti ti-map-pin" style="font-size:11px"></i>${v.v}, ${v.c}</div>
+    ${probHtml}
+  </div>`;
+}
+
+function renderUpcomingRow(g){
+  const v=getVenue(g.home);
+  const dt=new Date(g.st);
+  const today=new Date(); today.setHours(0,0,0,0);
+  const gday=new Date(dt); gday.setHours(0,0,0,0);
+  const diffD=Math.round((gday-today)/86400000);
+  const dayLabel=diffD===0?'Today':diffD===1?'Tomorrow':dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+  const timeStr=dt.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  const prob=g.prob;
+  const probBar=prob?`<div class="up-prob-bar"><div class="up-ph" style="width:${Math.round(prob[g.home]||0)}%"></div></div>`:'' ;
+  return`<div class="up-row">
+    <div class="up-flags">${gf(g.home)}${gf(g.away)}</div>
+    <div class="up-body">
+      <div class="up-teams">${g.hn||g.home} <span style="color:var(--tx3);font-weight:400">vs</span> ${g.an||g.away}</div>
+      <div class="up-meta"><i class="ti ti-map-pin" style="font-size:10px"></i>${v.v}, ${v.c}</div>
+    </div>
+    <div class="up-right">
+      <div class="up-time">${timeStr}</div>
+      <div class="up-date">${dayLabel}</div>
+      ${probBar}
+    </div>
+  </div>`;
+}
+
+function renderResultRow(g){
+  const dt=new Date(g.st);
+  const hs=g.s[g.home]??0, as=g.s[g.away]??0;
+  const dateStr=dt.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  const homeWon=hs>as, awayWon=as>hs;
+  return`<div class="res-row">
+    <div class="res-flags">${gf(g.home)}${gf(g.away)}</div>
+    <div class="res-teams">
+      <span style="${homeWon?'color:var(--tx);font-weight:500':''}">${g.hn||g.home}</span>
+      <span style="color:var(--tx3)"> vs </span>
+      <span style="${awayWon?'color:var(--tx);font-weight:500':''}">${g.an||g.away}</span>
+    </div>
+    <div class="res-score">${hs}–${as}</div>
+    <div class="res-date">${dateStr}</div>
+  </div>`;
+}
+
+// ── Poll engine ───────────────────────────────────────────────────────────────
+let pollTimer=null;
+let isPolling=false;
+
+async function fetchAndRender(){
+  if(isPolling) return;
+  isPolling=true;
+  const ico=$('fifa-ico'); if(ico) ico.classList.add('spin');
+
+  try{
+    const liveData=await fetchLiveData();
+    if(liveData&&liveData.length){
+      cachedGames=buildGameList(liveData);
+    } else if(!cachedGames){
+      // First load, no live data — use seed
+      cachedGames=WC_SEED.map(s=>({...s,st:s.st,hn:null,an:null,elapsed:null,period:null}));
+    }
+    renderFifaPanel(cachedGames);
+    $('fifa-auto-label').style.display='flex';
+    $('fifa-updated').textContent=`Updated ${new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'})}`;
+  }catch(e){
+    if(!cachedGames){
+      cachedGames=WC_SEED.map(s=>({...s,st:s.st,hn:null,an:null,elapsed:null,period:null}));
+      renderFifaPanel(cachedGames);
+    }
+    $('fifa-updated').textContent=`⚠ ${new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}`;
+  }
+
+  if(ico) ico.classList.remove('spin');
+  isPolling=false;
+}
+
+function triggerFifaRefresh(){
+  clearTimeout(pollTimer);
+  fetchAndRender().then(()=>{ schedulePoll(); });
+}
+
+// Poll every 30s when there are live matches, 60s otherwise
+function schedulePoll(){
+  const hasLive = cachedGames&&cachedGames.some(g=>g.status==='in_progress');
+  const delay = hasLive ? 30000 : 60000;
+  pollTimer = setTimeout(()=>{
+    fetchAndRender().then(()=>schedulePoll());
+  }, delay);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+loadWeather();
+loadFlights();
+fetchAndRender().then(()=>schedulePoll());
+</script>
+</body>
+</html>
